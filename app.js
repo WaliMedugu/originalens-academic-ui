@@ -17,24 +17,18 @@ let currentPaper = {
   fileName: "Research_Paper_Final_Submission.pdf",
   author: "Alex M. Taylor",
   submittedDate: "28-Sep-2026 14:22 GMT",
-  grade: "64",
-  similarity: 3,
-  aiScore: 3.8,
+  grade: "98",
+  similarity: 1,
+  aiScore: 1,
   wordCount: "1,482",
   charCount: "9,310",
   fileSize: "84.2 KB",
   pages: 3,
   isPdfCanvas: false,
   sources: [
-    { id: 1, name: "Submitted to University of California", percent: 18, category: "Student Papers", color: "num-1" },
-    { id: 2, name: "www.wikipedia.org/wiki/Artificial_intelligence", percent: 6, category: "Internet Source", color: "num-2" },
-    { id: 3, name: "IEEE Journal of Machine Learning, Vol 18", percent: 4, category: "Publication", color: "num-3" }
+    { id: 1, name: "Submitted to University of California", percent: 1, category: "Student Papers", color: "num-1" }
   ],
-  aiSentences: [
-    "The integration of autonomous algorithmic decision-making across healthcare, criminal sentencing, and financial lending has precipitated an urgent requirement for robust governance.",
-    "Historically, computational velocity was prioritized over interpretability; however, contemporary societal imperatives demand that machine-driven determinations adhere strictly to constitutional proportionality.",
-    "In conclusion, autonomous governance is not an impediment to technical velocity, but rather the cornerstone of enduring societal adoption."
-  ],
+  aiSentences: [],
   contentHtml: `
     <h1>Ethical Governance in Autonomous Systems: Algorithmic Accountability and Societal Trust</h1>
     <div class="author-block">
@@ -70,9 +64,9 @@ let inboxSubmissions = [
     id: "29841029",
     author: "Alex M. Taylor",
     title: "Research Paper Final Submission",
-    similarity: 3,
-    aiScore: 3.8,
-    grade: "96",
+    similarity: 1,
+    aiScore: 1,
+    grade: "98",
     submitted: "28-Sep-2026 14:22"
   },
   {
@@ -663,8 +657,8 @@ el.aiSlider.addEventListener("input", (e) => {
 });
 
 el.setZeroAiBtn.addEventListener("click", () => {
-  el.aiSlider.value = 0;
-  el.simSlider.value = 3;
+  el.aiSlider.value = 1;
+  el.simSlider.value = 1;
   el.aiSlider.dispatchEvent(new Event("input"));
   el.simSlider.dispatchEvent(new Event("input"));
 });
@@ -842,24 +836,18 @@ async function processUploadedSubmission() {
             fileName: fileName,
             author: authorName,
             submittedDate: new Date().toUTCString().replace(/^[A-Za-z]+,\s*/, "").slice(0, 20) + " GMT",
-            grade: "96",
-            similarity: 3,
-            aiScore: 3.8,
+            grade: "98",
+            similarity: 1,
+            aiScore: 1,
             wordCount: totalWordCount.toLocaleString(),
             charCount: (totalWordCount * 6.2).toFixed(0),
             fileSize: fileSizeStr,
             pages: pageCount,
             isPdfCanvas: isPdf && pdfDoc !== null,
             sources: [
-              { id: 1, name: "Submitted to University of California", percent: 18, category: "Student Papers", color: "num-1" },
-              { id: 2, name: "www.wikipedia.org/wiki/Artificial_intelligence", percent: 6, category: "Internet Source", color: "num-2" },
-              { id: 3, name: "IEEE Journal of Machine Learning, Vol 18", percent: 4, category: "Publication", color: "num-3" }
+              { id: 1, name: "Submitted to University of California", percent: 1, category: "Student Papers", color: "num-1" }
             ],
-            aiSentences: [
-              "The integration of autonomous algorithmic decision-making across healthcare, criminal sentencing, and financial lending has precipitated an urgent requirement for robust governance.",
-              "Historically, computational velocity was prioritized over interpretability; however, contemporary societal imperatives demand that machine-driven determinations adhere strictly to constitutional proportionality.",
-              "In conclusion, autonomous governance is not an impediment to technical velocity, but rather the cornerstone of enduring societal adoption."
-            ],
+            aiSentences: [],
             contentHtml: documentHtml
           };
 
