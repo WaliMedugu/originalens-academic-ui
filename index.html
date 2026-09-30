@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback Studio - Originality Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- Local PDF.js Engine -->
+  <script src="pdf.min.js"></script>
+</head>
+<body>
+
+  <!-- ================= TOP HEADER / APP BAR ================= -->
+  <header class="app-header" id="appHeader">
+    <div class="header-left">
+      <button class="back-nav-btn" id="backToInboxBtn" title="Back to Assignment Inbox">
+        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+
+      <div class="paper-meta-summary" id="paperMetaSummary">
+        <div class="doc-title-row">
+          <span class="doc-title" id="headerDocTitle">Research_Paper_Final_Submission.pdf</span>
+          <button class="info-circle-btn" id="headerInfoBtn" title="Submission Information">
+            <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2.5" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          </button>
+        </div>
+        <div class="doc-submeta">
+          <span id="headerAuthor">Author: Alex M. Taylor</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Navigation & Pagination -->
+    <div class="header-center" id="viewerNavCenter">
+      <button class="nav-icon-btn" id="prevPageBtn" title="Previous Page">
+        <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+      <span class="page-indicator">Page <span id="currentPageNum">1</span> of <span id="totalPagesNum">3</span></span>
+      <button class="nav-icon-btn" id="nextPageBtn" title="Next Page">
+        <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+
+      <div class="zoom-controls">
+        <button class="nav-icon-btn" id="zoomOutBtn" title="Zoom Out">-</button>
+        <span id="zoomLevelText">100%</span>
+        <button class="nav-icon-btn" id="zoomInBtn" title="Zoom In">+</button>
+        <button class="nav-btn-text" id="zoomFitBtn" title="Fit Width">Fit</button>
+      </div>
+    </div>
+
+    <!-- Header Right Action Tools -->
+    <div class="header-right">
+      <button class="header-action-btn" id="headerUploadBtn" title="Submit File">
+        <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+        <span>Submit File</span>
+      </button>
+
+      <!-- Download Dropdown -->
+      <div class="download-dropdown-wrap">
+        <button class="header-action-btn" id="downloadMenuBtn" title="Download">
+          <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span>Download</span>
+          <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="download-dropdown-menu" id="downloadDropdownMenu" style="display: none;">
+          <a class="download-menu-item" id="downloadCurrentViewOption">Current View</a>
+          <a class="download-menu-item" id="downloadDigitalReceiptOption">Digital Receipt</a>
+          <a class="download-menu-item" id="downloadOriginalFileOption">Originally Submitted File</a>
+        </div>
+      </div>
+
+      <button class="nav-icon-btn" id="printReportBtn" title="Print">
+        <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= MAIN APP VIEWPORT ================= -->
+  <main class="app-main-container">
+
+    <!-- VIEW 1: ASSIGNMENT INBOX / SUBMISSION TABLE -->
+    <section class="inbox-view-container" id="inboxView" style="display: none;">
+      <div class="inbox-content">
+        <div class="inbox-banner">
+          <div>
+            <h1 class="inbox-course-title">Assignment Inbox</h1>
+            <p class="inbox-subtitle">Course: Advanced Academic Research &bull; Assignment: Final Term Paper</p>
+          </div>
+          <div class="inbox-banner-actions">
+            <button class="btn btn-primary" id="openUploadModalBtn">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              Submit File
+            </button>
+          </div>
+        </div>
+
+        <div class="inbox-table-card">
+          <div class="table-toolbar">
+            <div class="search-box">
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" placeholder="Search submissions..." id="inboxSearchInput">
+            </div>
+            <div class="table-stats" id="tableStatsText">
+              Submissions: 4 &bull; All reports processed
+            </div>
+          </div>
+
+          <table class="inbox-table">
+            <thead>
+              <tr>
+                <th>Author</th>
+                <th>Title</th>
+                <th>Similarity</th>
+                <th>AI Writing</th>
+                <th>Grade</th>
+                <th>Date Submitted</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="inboxTableBody">
+              <!-- Dynamically populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: FEEDBACK STUDIO VIEWER -->
+    <section class="studio-viewer-container" id="studioView">
+      
+      <!-- Center Document Stage / Canvas -->
+      <div class="document-stage" id="documentStage">
+        <div class="page-viewport" id="pageViewport">
+          
+          <div class="paper-sheet" id="paperSheet">
+            <div class="paper-header-row">
+              <span class="paper-folio" id="paperFolioTitle">Final Term Paper</span>
+              <span class="paper-folio-page" id="sheetPageIndicator">Page 1 of 3</span>
+            </div>
+
+            <article class="paper-body" id="paperBody">
+              <!-- Rendered Document Content with Exact Highlights -->
+            </article>
+
+            <div class="paper-footer-row">
+              <span class="paper-footnote" id="paperFootnoteId">Submission ID: 29841029</span>
+              <span class="paper-date-stamp" id="paperFootnoteDate">28-Sep-2026</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Right Docked Feedback Studio Navigation Bar -->
+      <nav class="studio-sidebar-dock" id="studioDock">
+        
+        <!-- Section 1: Instructor Feedback Layer (Navy) -->
+        <div class="dock-section dock-grading-section" title="Instructor Feedback">
+          <div class="dock-item dock-grade-box" id="dockGradeBtn" title="Grade">
+            <span class="dock-grade-score" id="dockGradeScore">98</span>
+            <span class="dock-label">/100</span>
+          </div>
+          <button class="dock-item dock-icon-btn" id="dockQuickmarksBtn" title="QuickMarks">
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><polyline points="9 10 12 13 16 8"></polyline></svg>
+          </button>
+          <button class="dock-item dock-icon-btn" id="dockRubricBtn" title="Rubric Scorecard">
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>
+          </button>
+        </div>
+
+        <div class="dock-divider"></div>
+
+        <!-- Section 2: Similarity Layer (Signature Red) -->
+        <div class="dock-section dock-similarity-section" title="Similarity">
+          <button class="dock-item dock-score-badge red-badge active" id="dockSimilarityBtn" title="Match Overview">
+            <span class="score-percent" id="dockSimPercentText">3%</span>
+          </button>
+          
+          <button class="dock-item dock-icon-btn" id="dockAllSourcesBtn" title="All Sources">
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+          </button>
+
+          <button class="dock-item dock-icon-btn" id="dockFiltersBtn" title="Filters and Settings">
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+          </button>
+
+          <button class="dock-item dock-icon-btn" id="dockExcludedSourcesBtn" title="Excluded Sources">
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+          </button>
+        </div>
+
+        <div class="dock-divider"></div>
+
+        <!-- Section 3: AI Writing Detection Layer (Signature Cyan) -->
+        <div class="dock-section dock-ai-section" title="AI Writing">
+          <button class="dock-item dock-score-badge cyan-badge" id="dockAiBtn" title="AI Writing Detection">
+            <span class="score-percent" id="dockAiPercentText">3.8%</span>
+            <span class="score-ai-tag">AI</span>
+          </button>
+        </div>
+
+        <div class="dock-divider"></div>
+
+        <!-- Section 4: Document Utilities (Gray) -->
+        <div class="dock-section dock-util-section">
+          <button class="dock-item dock-icon-btn" id="dockDocInfoBtn" title="Submission Information">
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          </button>
+        </div>
+
+      </nav>
+
+      <!-- Expandable Side Drawer for Panels -->
+      <aside class="studio-drawer open" id="studioDrawer">
+        
+        <!-- Drawer Header -->
+        <div class="drawer-header">
+          <div class="drawer-title-wrap">
+            <span class="drawer-tag" id="drawerTag">SIMILARITY</span>
+            <h2 class="drawer-title" id="drawerTitle">Match Overview</h2>
+          </div>
+          <button class="drawer-close-btn" id="closeDrawerBtn" title="Close Panel">&times;</button>
+        </div>
+
+        <!-- Drawer Content Dynamic Container -->
+        <div class="drawer-body" id="drawerBody">
+          
+          <!-- PANEL A: SIMILARITY MATCH OVERVIEW -->
+          <div class="drawer-panel active" id="panelSimilarity">
+            <div class="similarity-summary-banner">
+              <div class="sim-huge-number" id="drawerSimBigScore">3%</div>
+              <div class="sim-summary-info">
+                <strong>Match Overview</strong>
+                <p>3% of this submission matches text in our global student repository and internet publications.</p>
+              </div>
+            </div>
+
+            <div class="panel-section-title">
+              <span>Match Breakdown</span>
+              <span class="badge-count" id="matchSourceCount">2 sources</span>
+            </div>
+
+            <div class="source-list" id="sourceListContainer">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- PANEL B: AI WRITING DETECTION -->
+          <div class="drawer-panel" id="panelAi">
+            <div class="ai-summary-banner" id="aiSummaryBanner">
+              <div class="ai-huge-number" id="drawerAiBigScore">3.8%</div>
+              <div class="ai-summary-info">
+                <strong id="aiVerdictTitle">3.8% AI Writing Detected</strong>
+                <p id="aiVerdictDesc">The percentage reflects the portion of qualifying text identified as AI-generated by writing detection models.</p>
+              </div>
+            </div>
+
+            <div class="ai-breakdown-card">
+              <div class="toggle-row">
+                <label for="aiHighlightToggle"><strong>Highlight AI text</strong></label>
+                <input type="checkbox" id="aiHighlightToggle" checked>
+              </div>
+            </div>
+
+            <div class="panel-section-title">
+              <span>Detected Segments</span>
+              <span class="badge-count" id="aiSentenceCount">0 segments</span>
+            </div>
+
+            <div class="ai-sentence-list" id="aiSentenceListContainer">
+              <div class="empty-state">No text detected as AI-generated. The submission meets standard authentic writing criteria.</div>
+            </div>
+
+            <div class="educational-disclaimer">
+              <strong>Notice:</strong> AI writing indicators reflect statistical model predictions and should be considered alongside academic context and student drafts.
+            </div>
+          </div>
+
+          <!-- PANEL C: FILTERS & SETTINGS -->
+          <div class="drawer-panel" id="panelFilters">
+            <h3 class="panel-subheading">Filters and Settings</h3>
+
+            <div class="filter-option">
+              <label class="filter-check-wrap">
+                <input type="checkbox" id="filterExcludeQuotes" checked>
+                <span class="check-box"></span>
+                <span class="filter-label-group">
+                  <strong>Exclude Quotes</strong>
+                </span>
+              </label>
+            </div>
+
+            <div class="filter-option">
+              <label class="filter-check-wrap">
+                <input type="checkbox" id="filterExcludeBib" checked>
+                <span class="check-box"></span>
+                <span class="filter-label-group">
+                  <strong>Exclude Bibliography</strong>
+                </span>
+              </label>
+            </div>
+
+            <div class="filter-option">
+              <label class="filter-check-wrap">
+                <input type="checkbox" id="filterExcludeSmall">
+                <span class="check-box"></span>
+                <span class="filter-label-group">
+                  <strong>Exclude Sources that are less than:</strong>
+                  <span class="filter-sub">8 words</span>
+                </span>
+              </label>
+            </div>
+
+            <button class="btn btn-secondary full-width" id="applyFiltersBtn">Apply Changes</button>
+          </div>
+
+          <!-- PANEL D: SUBMISSION DETAILS -->
+          <div class="drawer-panel" id="panelDocInfo">
+            <h3 class="panel-subheading">Submission Information</h3>
+            
+            <dl class="doc-info-grid">
+              <dt>File Name:</dt>
+              <dd id="infoFileName">Research_Paper_Final_Submission.pdf</dd>
+
+              <dt>File Size:</dt>
+              <dd id="infoFileSize">84.2 KB</dd>
+
+              <dt>Pages:</dt>
+              <dd id="infoPageCount">3</dd>
+
+              <dt>Word Count:</dt>
+              <dd id="infoWordCount">1,482</dd>
+
+              <dt>Character Count:</dt>
+              <dd id="infoCharCount">9,310</dd>
+
+              <dt>Submission ID:</dt>
+              <dd id="infoSubId">29841029</dd>
+
+              <dt>Submission Date:</dt>
+              <dd id="infoTimestamp">28-Sep-2026 14:22 GMT</dd>
+            </dl>
+          </div>
+
+        </div>
+      </aside>
+
+    </section>
+
+  </main>
+
+  <!-- ================= UPLOAD MODAL DIALOG (TURNITIN SINGLE FILE SUBMISSION) ================= -->
+  <div class="modal-backdrop" id="uploadModal" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Submit: Single File Upload</h3>
+        <button class="modal-close-btn" id="closeUploadModalBtn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="uploadAuthorFirst">First Name *</label>
+            <input type="text" id="uploadAuthorFirst" value="Alex" placeholder="First Name">
+          </div>
+          <div class="form-group">
+            <label for="uploadAuthorLast">Last Name *</label>
+            <input type="text" id="uploadAuthorLast" value="Taylor" placeholder="Last Name">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="uploadPaperTitle">Submission Title *</label>
+          <input type="text" id="uploadPaperTitle" value="Research Paper Final Submission" placeholder="Submission Title">
+        </div>
+
+        <!-- File Upload Zone -->
+        <div class="upload-dropzone" id="uploadDropzone">
+          <svg class="dropzone-icon" viewBox="0 0 24 24" width="44" height="44" stroke="currentColor" stroke-width="1.5" fill="none">
+            <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+            <path d="M12 12v9"></path>
+            <path d="m16 16-4-4-4 4"></path>
+          </svg>
+          <p class="dropzone-primary-text">Choose file from this computer, or drag and drop</p>
+          <p class="dropzone-subtext">The file must be less than 100 MB. Accepted types: PDF, DOCX, DOC, TXT</p>
+          <input type="file" id="realFileInput" accept=".pdf,.docx,.doc,.txt" style="display: none;">
+        </div>
+
+        <div class="selected-file-pill" id="selectedFilePill" style="display: none;">
+          <div class="file-pill-left">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            <div>
+              <span class="file-name" id="selectedFileNameDisplay">Document.pdf</span>
+              <span class="file-size" id="selectedFileSizeDisplay">120 KB</span>
+            </div>
+          </div>
+          <button class="remove-file-btn" id="removeFileBtn" title="Remove">&times;</button>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelUploadBtn">Cancel</button>
+        <button class="btn btn-primary" id="confirmUploadBtn">Upload</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SUBMISSION PROCESSING OVERLAY ================= -->
+  <div class="scanning-overlay" id="scanningOverlay" style="display: none;">
+    <div class="scanning-card">
+      <div class="spinner-ring"></div>
+      <h3 class="scanning-title" id="scanStepTitle">Processing Submission...</h3>
+      <div class="scan-progress-bar">
+        <div class="scan-progress-fill" id="scanProgressFill"></div>
+      </div>
+      <p class="scan-log-simple" id="scanLogSimple">Extracting text and generating originality report...</p>
+    </div>
+  </div>
+
+  <!-- ================= DISCREET SCORE ADJUSTER (SECRET SHORTCUT: Ctrl+Shift+D or double-click Submission ID) ================= -->
+  <aside class="teacher-controller-floater" id="teacherControllerFloater" style="display: none;">
+    <div class="controller-header">
+      <h4>Score Adjuster</h4>
+      <button class="controller-close" id="closeControllerBtn">&times;</button>
+    </div>
+    <div class="controller-body">
+      <div class="slider-group">
+        <div class="slider-meta">
+          <span>Similarity Index:</span>
+          <strong id="sliderSimVal">3%</strong>
+        </div>
+        <input type="range" id="simSlider" min="0" max="95" value="3">
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-meta">
+          <span>AI Detection Index:</span>
+          <strong id="sliderAiVal">0%</strong>
+        </div>
+        <input type="range" id="aiSlider" min="0" max="100" value="0">
+      </div>
+
+      <div class="quick-preset-row">
+        <button class="btn-micro" id="setZeroAiBtn">0% AI / 3% Sim</button>
+        <button class="btn-micro" id="setMidBtn">14% Sim / 25% AI</button>
+        <button class="btn-micro" id="setHighAiBtn">85% AI</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= TOOLTIP / POPUP FOR OVERLAPPING SOURCES ================= -->
+  <div class="match-popup" id="matchPopup" style="display: none;">
+    <div class="popup-header">
+      <span class="popup-badge" id="popupBadge">1</span>
+      <span class="popup-source-name" id="popupSourceName">Submitted to University Repository</span>
+      <button class="popup-close" id="closePopupBtn">&times;</button>
+    </div>
+    <div class="popup-body">
+      <div class="popup-comparison">
+        <div class="popup-side">
+          <span class="side-title">Submitted Text</span>
+          <p id="popupSubmittedText">Highlighted matching text in student submission.</p>
+        </div>
+        <div class="popup-side">
+          <span class="side-title">Original Source</span>
+          <p id="popupSourceOriginalText">Original text from repository database.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= DIGITAL RECEIPT MODAL (IDENTICAL TO TURNITIN DIGITAL RECEIPT) ================= -->
+  <div class="modal-backdrop" id="receiptModal" style="display: none;">
+    <div class="modal-dialog receipt-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Digital Receipt</h3>
+        <button class="modal-close-btn" id="closeReceiptModalBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="digital-receipt-card" id="digitalReceiptPrintable">
+          <div class="receipt-header">
+            <h4>DIGITAL RECEIPT</h4>
+            <p>This receipt acknowledges that your submission has been processed.</p>
+          </div>
+          <div class="receipt-divider"></div>
+          <dl class="receipt-grid">
+            <dt>Author:</dt>
+            <dd id="rcptAuthor">Alex M. Taylor</dd>
+            <dt>Title:</dt>
+            <dd id="rcptTitle">Research Paper Final Submission</dd>
+            <dt>Submission ID:</dt>
+            <dd id="rcptId">29841029</dd>
+            <dt>Submission Date:</dt>
+            <dd id="rcptDate">28-Sep-2026 14:22 GMT</dd>
+            <dt>File Name:</dt>
+            <dd id="rcptFileName">Research_Paper_Final_Submission.pdf</dd>
+            <dt>File Size:</dt>
+            <dd id="rcptFileSize">84.2 KB</dd>
+            <dt>Page Count:</dt>
+            <dd id="rcptPageCount">3</dd>
+            <dt>Word Count:</dt>
+            <dd id="rcptWordCount">1,482</dd>
+            <dt>Character Count:</dt>
+            <dd id="rcptCharCount">9,310</dd>
+          </dl>
+          <div class="receipt-footer">
+            <p>Copyright &copy; 2026. All rights reserved.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="closeReceiptBtn2">Close</button>
+        <button class="btn btn-primary" id="printReceiptBtn">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          Print
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="jszip.min.js"></script>
+  <script src="pdf.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
